@@ -1,9 +1,11 @@
 package com.example.springbootmailoauth.service;
 
 import com.example.springbootmailoauth.common.CertificationNumber;
+import com.example.springbootmailoauth.dto.req.auth.CheckCertificationRequestDto;
 import com.example.springbootmailoauth.dto.req.auth.EmailCertificationRequestDto;
 import com.example.springbootmailoauth.dto.req.auth.IdCheckRequestDto;
 import com.example.springbootmailoauth.dto.res.ResponseDto;
+import com.example.springbootmailoauth.dto.res.auth.CheckCertificationResponseDto;
 import com.example.springbootmailoauth.dto.res.auth.EmailCertificationResponseDto;
 import com.example.springbootmailoauth.dto.res.auth.IdCheckResponseDto;
 import com.example.springbootmailoauth.entity.CertificationEntity;
@@ -64,5 +66,29 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return EmailCertificationResponseDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super CheckCertificationResponseDto> checkCertification(CheckCertificationRequestDto dto) {
+
+        try {
+
+            String userId = dto.getId();
+            String email = dto.getEmail();
+            String certificationNumber = dto.getCertificationNumber();
+
+            CertificationEntity certificationEntity = certificationRepository.findByUserId(userId);
+
+            if (certificationEntity == null) return CheckCertificationResponseDto.certificationFail();
+
+            boolean isMatched = certificationEntity.getEmail().equals(email) && certificationEntity.getCertificationNumber().equals(certificationNumber);
+
+            if (!isMatched) return CheckCertificationResponseDto.certificationFail();
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return CheckCertificationResponseDto.success();
     }
 }

@@ -1,7 +1,9 @@
 package com.example.springbootmailoauth.controller;
 
+import com.example.springbootmailoauth.dto.req.auth.CheckCertificationRequestDto;
 import com.example.springbootmailoauth.dto.req.auth.EmailCertificationRequestDto;
 import com.example.springbootmailoauth.dto.req.auth.IdCheckRequestDto;
+import com.example.springbootmailoauth.dto.res.auth.CheckCertificationResponseDto;
 import com.example.springbootmailoauth.dto.res.auth.EmailCertificationResponseDto;
 import com.example.springbootmailoauth.dto.res.auth.IdCheckResponseDto;
 import com.example.springbootmailoauth.service.AuthService;
@@ -33,6 +35,14 @@ public class AuthController {
             @RequestBody @Valid EmailCertificationRequestDto requestBody
     ) {
         ResponseEntity<? super EmailCertificationResponseDto> response = authService.emailCertification(requestBody);
+        return response;
+    }
+
+    @PostMapping("/check-certification")
+    public ResponseEntity<? super CheckCertificationResponseDto> checkCertification(
+            @RequestBody @Valid CheckCertificationRequestDto requestBody
+    ) {
+        ResponseEntity<? super CheckCertificationResponseDto> response = authService.checkCertification(requestBody);
         return response;
     }
 }
