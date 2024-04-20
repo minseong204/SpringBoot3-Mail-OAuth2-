@@ -1,18 +1,13 @@
 package com.example.springbootmailoauth.service;
 
 import com.example.springbootmailoauth.common.CertificationNumber;
-import com.example.springbootmailoauth.dto.req.auth.CheckCertificationRequestDto;
-import com.example.springbootmailoauth.dto.req.auth.EmailCertificationRequestDto;
-import com.example.springbootmailoauth.dto.req.auth.IdCheckRequestDto;
-import com.example.springbootmailoauth.dto.req.auth.SignUpRequestDto;
+import com.example.springbootmailoauth.dto.req.auth.*;
 import com.example.springbootmailoauth.dto.res.ResponseDto;
-import com.example.springbootmailoauth.dto.res.auth.CheckCertificationResponseDto;
-import com.example.springbootmailoauth.dto.res.auth.EmailCertificationResponseDto;
-import com.example.springbootmailoauth.dto.res.auth.IdCheckResponseDto;
-import com.example.springbootmailoauth.dto.res.auth.SignUpResponseDto;
+import com.example.springbootmailoauth.dto.res.auth.*;
 import com.example.springbootmailoauth.entity.CertificationEntity;
 import com.example.springbootmailoauth.entity.UserEntity;
 import com.example.springbootmailoauth.provider.EmailProvider;
+import com.example.springbootmailoauth.provider.JwtProvider;
 import com.example.springbootmailoauth.repository.CertificationRepository;
 import com.example.springbootmailoauth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +24,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
 
-
+    private final JwtProvider jwtProvider;
     private final EmailProvider emailProvider;
 
     private final CertificationRepository certificationRepository;
@@ -136,6 +131,39 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return SignUpResponseDto.success();
+    }
 
+    @Override
+    public ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto dto) {
+
+        String token = null;
+
+        try {
+
+            String userId = dto.getId();
+            UserEntity userEntity = userRepository.findByUserId(userId);
+            if (userEntity == null) {
+                return SignInResponseDto.signInFail();
+            }
+
+            String password = dto.getPassword();
+            String encodedPassword = userEntity.getPassword();
+
+            // passwordEncoder.matches(1, 2);
+            // -> (1 : 평문 비번, 2: 암호화된 비번)
+            // -> 1번이 2번을 통해 만들어진 비밀번호인지 아닌지 반환
+            boolean isMatched = passwordEncoder.matches(password, encodedPassword);
+
+            if (!isMatched) return SignInResponseDto.signInFail();
+
+            token = jwtProvider.create(userId);
+
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return SignInResponseDto.success(token);
     }
 }
