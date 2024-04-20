@@ -1,13 +1,7 @@
 package com.example.springbootmailoauth.controller;
 
-import com.example.springbootmailoauth.dto.req.auth.CheckCertificationRequestDto;
-import com.example.springbootmailoauth.dto.req.auth.EmailCertificationRequestDto;
-import com.example.springbootmailoauth.dto.req.auth.IdCheckRequestDto;
-import com.example.springbootmailoauth.dto.req.auth.SignUpRequestDto;
-import com.example.springbootmailoauth.dto.res.auth.CheckCertificationResponseDto;
-import com.example.springbootmailoauth.dto.res.auth.EmailCertificationResponseDto;
-import com.example.springbootmailoauth.dto.res.auth.IdCheckResponseDto;
-import com.example.springbootmailoauth.dto.res.auth.SignUpResponseDto;
+import com.example.springbootmailoauth.dto.req.auth.*;
+import com.example.springbootmailoauth.dto.res.auth.*;
 import com.example.springbootmailoauth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +47,14 @@ public class AuthController {
             @RequestBody @Valid SignUpRequestDto requestBody
     ) {
         ResponseEntity<? super SignUpResponseDto> response = authService.singUp(requestBody);
+        return response;
+    }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<? super SignInResponseDto> signIn(
+            @RequestBody @Valid SignInRequestDto requestBody
+    ) {
+        ResponseEntity<? super SignInResponseDto> response = authService.signIn(requestBody);
         return response;
     }
 }
