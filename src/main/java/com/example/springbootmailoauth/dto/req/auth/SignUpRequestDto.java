@@ -16,11 +16,14 @@ public class SignUpRequestDto {
     @NotBlank
     private String id;
 
+    // FIXME: password 정규식 인식이 안됌
+    // 해결 ㅋ
 
     // ^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$
     // ^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$
     @NotBlank
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$",
+            message = "영문 숫자 특수기호 조합 8자리 이상")
     private String password;
 
     @Email

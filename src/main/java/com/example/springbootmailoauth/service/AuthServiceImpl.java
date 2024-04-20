@@ -16,12 +16,14 @@ import com.example.springbootmailoauth.provider.EmailProvider;
 import com.example.springbootmailoauth.repository.CertificationRepository;
 import com.example.springbootmailoauth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
@@ -110,6 +112,7 @@ public class AuthServiceImpl implements AuthService {
             if (isExistId) return SignUpResponseDto.duplicated();
 
             // TODO: password에 계속 공백이 들어감 해결해야함
+            // NOTE: postman에서는 json Key 값 오타였음
             String email = dto.getEmail();
             String certificationNumber = dto.getCertificationNumber();
             CertificationEntity certificationEntity = certificationRepository.findByUserId(userId);
@@ -119,6 +122,7 @@ public class AuthServiceImpl implements AuthService {
             String password = dto.getPassword();
             String encodedPassword = passwordEncoder.encode(password);
             dto.setPassword(encodedPassword);
+            log.info("password={}", dto.getPassword());
 
             UserEntity userEntity = new UserEntity(dto);
             userRepository.save(userEntity);
@@ -132,5 +136,6 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return SignUpResponseDto.success();
+
     }
 }
